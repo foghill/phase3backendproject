@@ -1,3 +1,4 @@
+
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
 
@@ -9,6 +10,7 @@ todos = [
 
 get '/todos' do
   content_type :json
+  todos = Todo.all
   todos.to_json
 end
 
