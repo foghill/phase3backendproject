@@ -2,47 +2,51 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
 
-todos = [
-  { id: 1, title: 'Buy groceries' },
-  { id: 2, title: 'Do laundry' },
-  { id: 3, title: 'Clean the house' }
-]
 
+# routes for Todos
 get '/todos' do
-  content_type :json
-  todos = Todo.all
-  todos.to_json
+  todos = Todo.all.includes(:category)
+  todos.to_json(include: :category)
 end
 
-
-# Add a new todo
 post '/todos' do
-  content_type :json
   todo = Todo.create(title: params[:title])
-  todo.to_json
+  todo.to_json(include: :category)
 end
 
-# Update an existing todo
-put '/todos/:id' do
-  content_type :json
-  todo = Todo.find(params[:id])
+put '/todos/:id' do |id|
+  todo = Todo.find(id)
   todo.update(title: params[:title])
-  todo.to_json
+  todo.to_json(include: :category)
 end
 
-# Delete a todo
-delete '/todos/:id' do
-  content_type :json
-  todo = Todo.find(params[:id])
+delete '/todos/:id' do |id|
+  todo = Todo.find(id)
   todo.destroy
-  { id: params[:id] }.to_json
+  todo.to_json(include: :category)
 end
 
+# routes for Categories
+get '/categories' do
+  categories = Category.all.includes(:todos)
+  categories.to_json(include: :todos)
+end
 
-  
-  # Add your routes here
-  get "/" do
-    { message: "Good luck with your project!" }.to_json
-  end
+post '/categories' do
+  category = Category.create(name: params[:name])
+  category.to_json(include: :todos)
+end
+
+put '/categories/:id' do |id|
+  category = Category.find(id)
+  category.update(name: params[:name])
+  category.to_json(include: :todos)
+end
+
+delete '/categories/:id' do |id|
+  category = Category.find(id)
+  category.destroy
+  category.to_json(include: :todos)
+end
 
 end
