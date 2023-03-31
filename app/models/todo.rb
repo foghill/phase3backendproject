@@ -1,7 +1,6 @@
-require 'active_record'
-
 class Todo < ActiveRecord::Base
-    # Other code and validations, if any
-    belongs_to :category
-  end
-  
+  belongs_to :category
+
+  validates :title, presence: true
+  validates :category_id, presence: true
+end
